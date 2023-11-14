@@ -4,3 +4,8 @@ services:
     build: ./db/
     ports:
       - 127.0.0.1:3306:3306
+  frontend:
+    container_name: react_store
+    build: ./app/
+    ports:
+      - 127.0.0.1:3000:3000
