@@ -9,3 +9,8 @@ services:
     build: ./app/
     ports:
       - 127.0.0.1:3000:3000
+  server:
+    container_name: flask_app
+    build: ./server/
+    ports:
+      - 127.0.0.1:5000:5000
