@@ -1,9 +1,11 @@
 from flask import Flask, json
-
+from flask_cors import CORS, cross_origin
 from flaskext.mysql import MySQL
 
 app = Flask(__name__)
 mysql = MySQL()
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 app.config["MYSQL_DATABASE_USER"] = "root"
 app.config["MYSQL_DATABASE_PASSWORD"] = "root"
 app.config["MYSQL_DATABASE_DB"] = "store"
@@ -36,6 +38,7 @@ def makeJSON(data):
 
 
 @app.route("/products")
+@cross_origin()
 def products():
     data = makeJSON(makeQuery("SELECT * FROM products"))
     response = app.response_class(
@@ -45,5 +48,32 @@ def products():
     )
     return response
 
-if (__name__ == "__main__"):
+@app.route("/api/order/<id>")
+@cross_origin()
+def order(id):
+    query = "UPDATE products SET order_amount = order_amount + 1 WHERE id = %s"
+    cursor = mysql.get_db().cursor()
+    cursor.execute(query, (id,))
+    mysql.get_db().commit()
+    
+    data = makeJSON(makeQuery("SELECT * FROM products WHERE id = " + str(id)))
+    response = app.response_class(
+        response=json.dumps(data),
+        status=200,
+        mimetype="Content-Type application/json"
+    )
+    return response
+
+@app.route("/api/product/<id>")
+@cross_origin()
+def product(id):
+    data = makeJSON(makeQuery("SELECT * FROM products WHERE id = " + str(id)))
+    response = app.response_class(
+        response=json.dumps(data),
+        status=200,
+        mimetype="Content-Type application/json"
+    )
+    return response
+
+if __name__ == "__main__":
     app.run(debug=True)

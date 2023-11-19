@@ -1,0 +1,10 @@
+.card-image {
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+}
+.footer {
+    text-align: center;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+}
